@@ -1,0 +1,29 @@
+
+=== 2025-09-16 22:30:22 ===
+المستخدم: اية
+الفرقة: فرقه اولى
+الترم: الفصل الدراسي الأول
+القسم: natural science
+
+السؤال: اي هوه الجول
+
+رد البوت: هذا السؤال غير موجود في المنهج المرفوع. يرجى مراجعة المنهج أو سؤال المدرس.
+
+==================================================
+
+
+=== 2025-09-16 22:30:24 ===
+المستخدم: اية
+الفرقة: فرقه اولى
+الترم: الفصل الدراسي الأول
+القسم: natural science
+
+السؤال: والكالوري
+
+رد البوت: "الكالوري" (calorie) هي وحدة قياس كمية الحرارة، وتُعرف بأنها "كمية الحرارة المطلوبة لرفع درجة حرارة جرام واحد من الماء درجة مئوية واحدة". الوحدة القياسية للكالوري الموصى بها من قبل الاتحاد الدولي للفيزياء البحتة والتطبيقية هي "كمية الحرارة اللازمة لرفع درجة حرارة جرام واحد من الماء من 14.5 درجة مئوية إلى 15.5 درجة مئوية."
+
+مرجع من المنهج:
+"The unit for measuring the quantity of heat is the calorie which it is the amount of heat required to raise the temperature of one gram of water through one degree centigrade. The standard unit of calorie recommended by the International Union of pure and Applied Physics: The amount of heat necessary to raise the temperature if 1 gram of water from 14.5°C to 15.5°C." (الجزء الثاني: الحرارة، III. الحرارة النوعية، 1. كمية الحرارة)
+
+==================================================
+

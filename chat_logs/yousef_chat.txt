@@ -1,0 +1,67 @@
+
+=== 2025-09-16 21:31:31 ===
+المستخدم: yousef
+الفرقة: فرقه اولى
+الترم: الفصل الدراسي الأول
+القسم: biology
+
+السؤال: hi
+
+رد البوت: هذا السؤال غير موجود في المنهج المرفوع. يرجى مراجعة المنهج أو سؤال المدرس.
+
+==================================================
+
+
+=== 2025-09-16 21:31:37 ===
+المستخدم: yousef
+الفرقة: فرقه اولى
+الترم: الفصل الدراسي الأول
+القسم: biology
+
+السؤال: اهلا
+
+رد البوت: أهلاً بك. أنا هنا لمساعدتك في المناهج الدراسية فقط. يرجى طرح أسئلتك المتعلقة بمحتوى المنهج المرفوع.
+
+==================================================
+
+
+=== 2025-09-16 21:31:55 ===
+المستخدم: yousef
+الفرقة: فرقه اولى
+الترم: الفصل الدراسي الأول
+القسم: biology
+
+السؤال: اى انواع الروابط
+
+رد البوت: أنواع الروابط المذكورة في المنهج هي:
+
+1.  **الروابط الأيونية (Ionic bonds):**
+    "Some atoms become more stable by gaining or losing an entire electron (or several electrons). When they do so, atoms form ions, or charged particles... The electrostatic attraction between them forms an ionic bond..."
+    (صفحة 58-59)
+
+2.  **الروابط التساهمية (Covalent bonds):**
+    "Another way atoms can become more stable is by sharing electrons (rather than fully gaining or losing them), thus forming covalent bonds. Covalent bonds are more common than ionic bonds in the molecules of living organisms."
+    (صفحة 62)
+
+3.  **الروابط التساهمية القطبية (Polar covalent bonds):**
+    "There are two basic types of covalent bonds: polar and nonpolar. In a polar covalent bond, the electrons are unequally shared by the atoms and spend more time close to one atom than the other. Because of the unequal distribution of electrons between the atoms of different elements, slightly positive (δ+) and slightly negative (δ –) charges develop in different parts of the molecule."
+    (صفحة 64)
+
+4.  **الروابط التساهمية غير القطبية (Nonpolar covalent bonds):**
+    "Nonpolar covalent bonds form between two atoms of the same element, or between atoms of different elements that share electrons more or less equally."
+    (صفحة 64)
+
+5.  **الروابط الهيدروجينية (Hydrogen bonds):**
+    "The hydrogen bond is a special dipole-dipole interaction between they hydrogen atom in a polar N-H, O-H, or F-H bond and an electronegative O, N, or F atom."
+    (صفحة 67)
+
+6.  **قوى لندن التشتتية (London dispersion forces):**
+    "Like hydrogen bonds, London dispersion forces are weak attractions between molecules. However, unlike hydrogen bonds, they can occur between atoms or molecules of any kind, and they depend on temporary imbalances in electron distribution."
+    (صفحة 67)
+
+7.  **الروابط الفلزية (Metallic bonding):**
+    "In metallic bonding, bonding electrons are delocalized over a lattice of atoms. By contrast, in ionic compounds, the locations of the binding electrons and their charges are static."
+    (صفحة 68)
+
+==================================================
+
