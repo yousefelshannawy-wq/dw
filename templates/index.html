@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البوت التعليمي المحدث</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <!-- Header -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-robot"></i>
+                البوت التعليمي المحدث
+            </a>
+
+            <div class="navbar-nav ms-auto">
+                <button id="adminLoginBtn" class="btn btn-outline-light me-2">
+                    <i class="fas fa-user-cog"></i> دخول الإدارة
+                </button>
+                <button id="adminLogoutBtn" class="btn btn-outline-light me-2" style="display: none;">
+                    <i class="fas fa-sign-out-alt"></i> خروج الإدارة
+                </button>
+                <button onclick="resetChat()" class="btn btn-outline-light">
+                    <i class="fas fa-refresh"></i> إعادة تشغيل
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- إعداد المحادثة -->
+        <section id="setupSection">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="card shadow">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">
+                                <i class="fas fa-cogs"></i> إعدادات المحادثة
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <form id="setupForm">
+                                <!-- اسم المستخدم -->
+                                <div class="mb-3">
+                                    <label for="usernameInput" class="form-label">
+                                        <i class="fas fa-user"></i> اسم المستخدم *
+                                    </label>
+                                    <input type="text" class="form-control" id="usernameInput" 
+                                           placeholder="أدخل اسمك" required>
+                                </div>
+
+                                <!-- الصف الدراسي -->
+                                <div class="mb-3">
+                                    <label for="gradeSelect" class="form-label">
+                                        <i class="fas fa-graduation-cap"></i> الصف الدراسي *
+                                    </label>
+                                    <select class="form-select" id="gradeSelect" required>
+                                        <option value="">اختر الصف</option>
+                                    </select>
+                                </div>
+
+                                <!-- الفصل الدراسي -->
+                                <div class="mb-3">
+                                    <label for="semesterSelect" class="form-label">
+                                        <i class="fas fa-calendar-alt"></i> الفصل الدراسي *
+                                    </label>
+                                    <select class="form-select" id="semesterSelect" required>
+                                        <option value="">اختر الفصل الدراسي</option>
+                                    </select>
+                                </div>
+
+                                <!-- الأقسام -->
+                                <div class="mb-3">
+                                    <label class="form-label">
+                                        <i class="fas fa-tags"></i> القسم *
+                                    </label>
+                                    <div id="departmentCheckboxes" class="mt-2">
+                                        <!-- ستتم إضافة الأقسام ديناميكياً -->
+                                    </div>
+                                </div>
+
+                                <button type="button" id="startChatBtn" class="btn btn-primary w-100">
+                                    <i class="fas fa-comments"></i> بدء المحادثة
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- قسم المحادثة -->
+        <section id="chatSection" style="display: none;">
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- معلومات المحادثة -->
+                    <div id="chatInfo"></div>
+
+                    <!-- منطقة المحادثة -->
+                    <div class="card shadow">
+                        <div class="card-header">
+                            <h6 class="card-title mb-0">
+                                <i class="fas fa-comments"></i> المحادثة
+                            </h6>
+                        </div>
+                        <div class="card-body p-0">
+                            <div id="chatContainer" class="chat-container p-3" style="height: 400px; overflow-y: auto;">
+                                <!-- رسائل المحادثة ستظهر هنا -->
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <!-- رسائل الحالة -->
+                            <div id="fileStatus" class="mb-2" style="display: none;"></div>
+                            
+                            <!-- حقل الرسائل مع زر رفع الملفات -->
+                            <div class="input-group">
+                                <input type="file" class="form-control" id="fileUploadInput" 
+                                       accept="image/*,video/*,.pdf,.doc,.docx" style="display: none;">
+                                <button id="attachFileBtn" class="btn btn-outline-secondary" type="button" title="إرفاق ملف (صور، فيديو، أو PDF)">
+                                    <i class="fas fa-paperclip"></i>
+                                </button>
+                                <textarea id="messageInput" class="form-control" 
+                                         placeholder="اكتب سؤالك هنا أو ارفق ملفاً..." rows="2"></textarea>
+                                <button id="sendBtn" class="btn btn-primary" type="button">
+                                    <i class="fas fa-paper-plane"></i> إرسال
+                                </button>
+                            </div>
+                            
+                            <!-- زر مسح المحادثة -->
+                            <div class="mt-2 text-end">
+                                <button id="clearChatBtn" class="btn btn-outline-danger btn-sm">
+                                    <i class="fas fa-eraser"></i> مسح المحادثة
+                                </button>
+                            </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <!-- نصائح وإرشادات -->
+                    <div class="card shadow">
+                        <div class="card-header">
+                            <h6 class="card-title mb-0">
+                                <i class="fas fa-lightbulb"></i> نصائح للاستخدام
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success"></i>
+                                    اطرح أسئلة واضحة ومحددة
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success"></i>
+                                    استخدم كلمات مفتاحية من المنهج
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success"></i>
+                                    ارفع صور أو فيديوهات للتحليل
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success"></i>
+                                    اطلب إنتاج صور تعليمية مخصصة
+                                </li>
+                                <li class="mb-2">
+                                    <i class="fas fa-check text-success"></i>
+                                    جميع الميزات متاحة في خانة الأسئلة
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- لوحة الإدارة -->
+        <section id="adminPanel" style="display: none;" class="mt-4">
+            <div class="card shadow">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-tachometer-alt"></i> لوحة الإدارة
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <!-- الإحصائيات -->
+                    <div class="mb-4">
+                        <h6><i class="fas fa-chart-bar"></i> الإحصائيات</h6>
+                        <div id="dashboardStats">
+                            <!-- الإحصائيات ستظهر هنا -->
+                        </div>
+                    </div>
+
+                    <!-- إدارة البيانات -->
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div id="gradesManagement">
+                                <!-- إدارة الدرجات -->
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div id="semestersManagement">
+                                <!-- إدارة الفصول الدراسية -->
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div id="departmentsManagement">
+                                <!-- إدارة الأقسام -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- تاريخ المحادثات -->
+                    <div class="mt-4">
+                        <h6><i class="fas fa-history"></i> تاريخ المحادثات</h6>
+                        <div id="conversationHistory">
+                            <!-- تاريخ المحادثات سيظهر هنا -->
+                        </div>
+                    </div>
+
+                    <!-- لوحة المطور -->
+                    <div class="mt-4">
+                        <h6><i class="fas fa-code"></i> لوحة المطور</h6>
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- رفع البيانات -->
+                                <div class="mb-4">
+                                    <h7><i class="fas fa-upload"></i> رفع البيانات</h7>
+                                    <form id="developerUploadForm" class="mt-3">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <label for="devGradeSelect" class="form-label">الفرقة</label>
+                                                <select class="form-select" id="devGradeSelect" required>
+                                                    <option value="">اختر الفرقة</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label for="devSemesterSelect" class="form-label">الترم</label>
+                                                <select class="form-select" id="devSemesterSelect" required>
+                                                    <option value="">اختر الترم</option>
+                                                </select>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">الأقسام</label>
+                                                <div id="devDepartmentsList" class="border rounded p-2" style="max-height: 100px; overflow-y: auto;">
+                                                    <!-- الأقسام ستظهر هنا -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mt-3">
+                                            <label for="developerFileInput" class="form-label">الملف</label>
+                                            <input type="file" class="form-control" id="developerFileInput" 
+                                                   accept=".txt,.pdf,.doc,.docx" required>
+                                            <div class="form-text">الملفات المدعومة: TXT, PDF, DOC, DOCX</div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary mt-3">
+                                            <i class="fas fa-upload"></i> رفع البيانات
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <!-- قائمة البيانات المرفوعة -->
+                                <div class="mt-4">
+                                    <h7><i class="fas fa-list"></i> البيانات المرفوعة</h7>
+                                    <div id="developerFilesList" class="mt-3">
+                                        <!-- البيانات المرفوعة ستظهر هنا -->
+                                    </div>
+                                </div>
+
+                                <!-- إدارة الأقسام -->
+                                <div class="mt-4">
+                                    <h7><i class="fas fa-tags"></i> إدارة الأقسام</h7>
+                                    <div class="card mt-3">
+                                        <div class="card-body">
+                                            <!-- إضافة قسم جديد مع عدة فرق -->
+                                            <div class="mb-4">
+                                                <h8>إضافة قسم جديد مع الفرق:</h8>
+                                                <form id="newDepartmentForm" class="mt-2">
+                                                    <div class="row">
+                                                        <div class="col-md-12 mb-3">
+                                                            <label for="departmentName" class="form-label">اسم القسم:</label>
+                                                            <input type="text" class="form-control" id="departmentName" placeholder="أدخل اسم القسم" required>
+                                                        </div>
+                                                        <div class="col-md-12 mb-3">
+                                                            <label class="form-label">اختر الفرق المرتبطة بهذا القسم:</label>
+                                                            <div id="gradesCheckboxes" class="row mt-2 border rounded p-3" style="max-height: 200px; overflow-y: auto;">
+                                                                <!-- صناديق الفرق ستظهر هنا ديناميكياً -->
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12">
+                                                            <button type="submit" class="btn btn-success">
+                                                                <i class="fas fa-plus"></i> إضافة القسم مع الفرق
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                            <hr>
+
+                                            <!-- النظام القديم لإضافة قسم منفرد -->
+                                            <div class="mb-3">
+                                                <h8>إضافة قسم منفرد (نظام قديم):</h8>
+                                                <form id="addDepartmentForm" class="mt-2">
+                                                    <div class="row">
+                                                        <div class="col-md-6">
+                                                            <input type="text" class="form-control" id="newDeptName" placeholder="اسم القسم" required>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <button type="submit" class="btn btn-primary">
+                                                                <i class="fas fa-plus"></i> إضافة
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                            <!-- ربط الأقسام بالفرق -->
+                                            <div class="mb-3">
+                                                <h8>ربط قسم بفرقة:</h8>
+                                                <form id="linkDepartmentForm" class="mt-2">
+                                                    <div class="row">
+                                                        <div class="col-md-3">
+                                                            <select class="form-select" id="linkDeptSelect" required>
+                                                                <option value="">اختر القسم</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <select class="form-select" id="linkGradeSelect" required>
+                                                                <option value="">اختر الفرقة</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <select class="form-select" id="linkSemesterSelect" required>
+                                                                <option value="">اختر الترم</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="col-md-3">
+                                                            <button type="submit" class="btn btn-success">
+                                                                <i class="fas fa-link"></i> ربط
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                            <!-- قائمة ربط الأقسام -->
+                                            <div id="departmentGradesList">
+                                                <!-- قائمة ربط الأقسام بالفرق ستظهر هنا -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- ملفات الشات -->
+                                <div class="mt-4">
+                                    <h7><i class="fas fa-comments"></i> ملفات الشات</h7>
+                                    <div class="card mt-3">
+                                        <div class="card-body">
+                                            <div id="chatFilesList">
+                                                <!-- قائمة ملفات الشات ستظهر هنا -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal تسجيل دخول الإدارة -->
+    <div class="modal fade" id="adminLoginModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">تسجيل دخول الإدارة</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="adminLoginForm">
+                        <div class="mb-3">
+                            <label for="adminPassword" class="form-label">كلمة المرور</label>
+                            <input type="password" class="form-control" id="adminPassword" required>
+                        </div>
+                        <button type="button" onclick="adminLogin()" class="btn btn-primary w-100">
+                            <i class="fas fa-sign-in-alt"></i> دخول
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal إضافة عنصر جديد -->
+    <div class="modal fade" id="addItemModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">إضافة عنصر جديد</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addItemForm">
+                        <input type="hidden" id="itemType">
+                        <div class="mb-3">
+                            <label for="itemName" class="form-label">الاسم *</label>
+                            <input type="text" class="form-control" id="itemName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="itemDescription" class="form-label">الوصف</label>
+                            <textarea class="form-control" id="itemDescription" rows="3"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-plus"></i> إضافة
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}">
+
+// ===========================================
+// JavaScript للميزات الجديدة
+// ===========================================
+
+// إدارة الأقسام الإدارية
+function showAdminSection(sectionId) {
+    // إخفاء جميع الأقسام
+    document.querySelectorAll('.admin-section').forEach(section => {
+        section.style.display = 'none';
+    });
+
+    // إظهار القسم المحدد
+    const section = document.getElementById(sectionId);
+    if (section) {
+        section.style.display = 'block';
+
+        // تحميل البيانات حسب القسم
+        switch(sectionId) {
+            case 'fileManagement':
+                loadFileManagement();
+                break;
+            case 'departmentManagement':
+                loadDepartmentManagement();
+                break;
+            case 'chatLogs':
+                loadChatLogs();
+                break;
+        }
+    }
+}
+
+// تحميل إدارة الملفات
+function loadFileManagement() {
+    fetch('/admin/upload-file')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // تحميل الأقسام
+                const departmentsList = document.getElementById('departmentsList');
+                departmentsList.innerHTML = '';
+
+                data.data.departments.forEach(dept => {
+                    const checkbox = document.createElement('div');
+                    checkbox.innerHTML = `
+                        <label>
+                            <input type="checkbox" name="departments[]" value="${dept[0]}">
+                            ${dept[1]} ${dept[2] ? '(' + dept[2] + ')' : ''}
+                        </label>
+                    `;
+                    departmentsList.appendChild(checkbox);
+                });
+            }
+        });
+
+    // تحميل الملفات المرفوعة
+    loadUploadedFiles();
+}
+
+// تحميل الملفات المرفوعة
+function loadUploadedFiles() {
+    fetch('/admin/files')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const filesContainer = document.getElementById('uploadedFiles');
+                filesContainer.innerHTML = '';
+
+                data.files.forEach(file => {
+                    const fileDiv = document.createElement('div');
+                    fileDiv.className = 'file-item';
+                    fileDiv.innerHTML = `
+                        <div class="file-info">
+                            <strong>${file[1]}</strong>
+                            <span class="file-type">${file[2]}</span>
+                            <span class="file-size">${(file[3] / 1024).toFixed(2)} KB</span>
+                            <span class="file-date">${file[4]}</span>
+                        </div>
+                        <div class="file-departments">
+                            الأقسام: ${file[6] || 'غير محدد'}
+                        </div>
+                    `;
+                    filesContainer.appendChild(fileDiv);
+                });
+            }
+        });
+}
+
+// معالجة رفع الملفات
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadForm = document.getElementById('uploadForm');
+    if (uploadForm) {
+        uploadForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const formData = new FormData();
+            const fileInput = document.getElementById('fileInput');
+            const selectedDepts = document.querySelectorAll('input[name="departments[]"]:checked');
+
+            if (!fileInput.files[0]) {
+                alert('يرجى اختيار ملف');
+                return;
+            }
+
+            if (selectedDepts.length === 0) {
+                alert('يرجى اختيار قسم واحد على الأقل');
+                return;
+            }
+
+            formData.append('file', fileInput.files[0]);
+            selectedDepts.forEach(dept => {
+                formData.append('departments[]', dept.value);
+            });
+
+            fetch('/admin/upload-file', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('تم رفع الملف بنجاح');
+                    uploadForm.reset();
+                    loadUploadedFiles(); // إعادة تحميل قائمة الملفات
+                } else {
+                    alert('خطأ: ' + data.error);
+                }
+            })
+            .catch(error => {
+                alert('حدث خطأ في رفع الملف');
+                console.error(error);
+            });
+        });
+    }
+});
+
+// تحميل إدارة الأقسام
+function loadDepartmentManagement() {
+    fetch('/admin/manage-departments')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // تحميل الفرق والفصول
+                const gradeSelect = document.getElementById('newDeptGrade');
+                const semesterSelect = document.getElementById('newDeptSemester');
+
+                gradeSelect.innerHTML = '<option value="">اختر الفرقة</option>';
+                data.grades.forEach(grade => {
+                    gradeSelect.innerHTML += `<option value="${grade[0]}">${grade[1]}</option>`;
+                });
+
+                semesterSelect.innerHTML = '<option value="">اختر الفصل</option>';
+                data.semesters.forEach(semester => {
+                    semesterSelect.innerHTML += `<option value="${semester[0]}">${semester[1]}</option>`;
+                });
+
+                // تحميل الأقسام الحالية
+                const departmentsList = document.getElementById('departmentsList2');
+                departmentsList.innerHTML = '';
+
+                data.departments.forEach(dept => {
+                    const deptDiv = document.createElement('div');
+                    deptDiv.className = 'department-item';
+                    deptDiv.innerHTML = `
+                        <div class="dept-info">
+                            <strong>${dept[1]}</strong>
+                            <span>الفرقة: ${dept[4] || 'غير محدد'}</span>
+                            <span>الفصل: ${dept[5] || 'غير محدد'}</span>
+                        </div>
+                        <div class="dept-controls">
+                            <select onchange="updateDepartment(${dept[0]}, this.value, 'grade')">
+                                <option value="">اختر الفرقة</option>
+                                ${data.grades.map(g => `<option value="${g[0]}" ${g[0] == dept[2] ? 'selected' : ''}>${g[1]}</option>`).join('')}
+                            </select>
+                            <select onchange="updateDepartment(${dept[0]}, this.value, 'semester')">
+                                <option value="">اختر الفصل</option>
+                                ${data.semesters.map(s => `<option value="${s[0]}" ${s[0] == dept[3] ? 'selected' : ''}>${s[1]}</option>`).join('')}
+                            </select>
+                        </div>
+                    `;
+                    departmentsList.appendChild(deptDiv);
+                });
+            }
+        });
+}
+
+// إضافة قسم جديد
+function addDepartment() {
+    const name = document.getElementById('newDeptName').value;
+    const gradeId = document.getElementById('newDeptGrade').value;
+    const semesterId = document.getElementById('newDeptSemester').value;
+
+    if (!name) {
+        alert('يرجى إدخال اسم القسم');
+        return;
+    }
+
+    fetch('/admin/manage-departments', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            action: 'add_department',
+            name: name,
+            grade_id: gradeId,
+            semester_id: semesterId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('تم إضافة القسم بنجاح');
+            document.getElementById('newDeptName').value = '';
+            loadDepartmentManagement(); // إعادة تحميل القائمة
+        } else {
+            alert('خطأ: ' + data.error);
+        }
+    });
+}
+
+// تحديث قسم
+function updateDepartment(deptId, value, type) {
+    // الحصول على القيم الحالية
+    const deptDiv = event.target.closest('.department-item');
+    const gradeSelect = deptDiv.querySelector('select:first-of-type');
+    const semesterSelect = deptDiv.querySelector('select:last-of-type');
+
+    const gradeId = type === 'grade' ? value : gradeSelect.value;
+    const semesterId = type === 'semester' ? value : semesterSelect.value;
+
+    fetch('/admin/manage-departments', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            action: 'update_department',
+            department_id: deptId,
+            grade_id: gradeId,
+            semester_id: semesterId
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // تم التحديث بنجاح
+        } else {
+            alert('خطأ في التحديث: ' + data.error);
+        }
+    });
+}
+
+// تحميل سجلات الشات
+function loadChatLogs() {
+    fetch('/admin/chat-logs')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const usersList = document.getElementById('usersList');
+                usersList.innerHTML = '';
+
+                data.users.forEach(user => {
+                    const userDiv = document.createElement('div');
+                    userDiv.className = 'user-item';
+                    userDiv.innerHTML = `
+                        <div class="user-info" onclick="loadUserChat(${user[0]})">
+                            <strong>جلسة: ${user[1].substring(0, 8)}...</strong>
+                            <span>IP: ${user[2]}</span>
+                            <span>المحادثات: ${user[4]}</span>
+                            <span>آخر نشاط: ${user[5]}</span>
+                        </div>
+                    `;
+                    usersList.appendChild(userDiv);
+                });
+            }
+        });
+}
+
+// تحميل محادثات مستخدم معين
+function loadUserChat(userId) {
+    fetch(`/admin/user-chat/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const chatSection = document.getElementById('userChatSection');
+                const chatContent = document.getElementById('userChatContent');
+
+                chatContent.innerHTML = '';
+
+                // عرض معلومات المستخدم
+                const userInfo = document.createElement('div');
+                userInfo.className = 'user-details';
+                userInfo.innerHTML = `
+                    <h5>معلومات المستخدم</h5>
+                    <p>معرف الجلسة: ${data.user_info[0]}</p>
+                    <p>عنوان IP: ${data.user_info[1]}</p>
+                    <p>تاريخ الإنشاء: ${data.user_info[3]}</p>
+                `;
+                chatContent.appendChild(userInfo);
+
+                // عرض المحادثات
+                let currentConvIndex = -1;
+                data.conversations.forEach(conv => {
+                    if (conv[0] !== currentConvIndex) {
+                        currentConvIndex = conv[0];
+                        const convHeader = document.createElement('div');
+                        convHeader.className = 'conversation-header';
+                        convHeader.innerHTML = `<h6>محادثة #${currentConvIndex}</h6>`;
+                        chatContent.appendChild(convHeader);
+                    }
+
+                    const messageDiv = document.createElement('div');
+                    messageDiv.className = `message ${conv[3]}`;
+
+                    if (conv[3] === 'question') {
+                        messageDiv.innerHTML = `
+                            <div class="message-content">
+                                <strong>المستخدم:</strong> ${conv[1]}
+                            </div>
+                            <div class="message-meta">${conv[4]}</div>
+                        `;
+                    } else {
+                        messageDiv.innerHTML = `
+                            <div class="message-content">
+                                <strong>البوت:</strong> ${conv[2]}
+                            </div>
+                            <div class="message-meta">${conv[4]}</div>
+                        `;
+                    }
+
+                    chatContent.appendChild(messageDiv);
+                });
+
+                chatSection.style.display = 'block';
+            }
+        });
+}
+
+</script>
+
+        <!-- Admin Panel -->
+        <div id="admin-panel" class="admin-panel" style="display:none;">
+            <div class="admin-header">
+                <h2>لوحة التحكم الإدارية</h2>
+                <button onclick="closeAdmin()" class="close-btn">&times;</button>
+            </div>
+
+            <div class="admin-nav">
+                <button onclick="showAdminSection('fileManagement')" class="nav-btn">إدارة الملفات</button>
+                <button onclick="showAdminSection('departmentManagement')" class="nav-btn">إدارة الأقسام</button>
+                <button onclick="showAdminSection('chatLogs')" class="nav-btn">سجلات الشات</button>
+            </div>
+
+            <div class="admin-content">
+        
+                    <!-- قسم إدارة الملفات -->
+                    <div class="admin-section" id="fileManagement" style="display:none;">
+                        <h3>إدارة الملفات المرفوعة</h3>
+
+                        <div class="upload-section">
+                            <h4>رفع ملف جديد</h4>
+                            <form id="uploadForm" enctype="multipart/form-data">
+                                <div class="form-group">
+                                    <label for="fileInput">اختر الملف (PDF أو Word):</label>
+                                    <input type="file" id="fileInput" name="file" accept=".pdf,.doc,.docx" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>الأقسام المتاحة:</label>
+                                    <div id="departmentsList" class="checkbox-list">
+                                        <!-- سيتم تحميل الأقسام ديناميكياً -->
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary">رفع الملف</button>
+                            </form>
+                        </div>
+
+                        <div class="files-list">
+                            <h4>الملفات المرفوعة</h4>
+                            <div id="uploadedFiles">
+                                <!-- سيتم تحميل قائمة الملفات ديناميكياً -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- قسم إدارة الأقسام -->
+                    <div class="admin-section" id="departmentManagement" style="display:none;">
+                        <h3>إدارة الأقسام والفرق</h3>
+
+                        <div class="card">
+                            <div class="card-header">
+                                <h4>إضافة قسم جديد</h4>
+                            </div>
+                            <div class="card-body">
+                                <form id="newDepartmentForm">
+                                    <div class="mb-3">
+                                        <label for="departmentName" class="form-label">اسم القسم</label>
+                                        <input type="text" class="form-control" id="departmentName" 
+                                               placeholder="أدخل اسم القسم" required>
+                                    </div>
+                                    
+                                    <div class="mb-3">
+                                        <label class="form-label">اختر الفرق المتاحة لهذا القسم:</label>
+                                        <div id="gradesCheckboxes" class="row">
+                                            <!-- سيتم تحميل الفرق ديناميكياً -->
+                                        </div>
+                                    </div>
+                                    
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-plus"></i> إضافة القسم
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <div class="card mt-4">
+                            <div class="card-header">
+                                <h4>الأقسام والفرق الحالية</h4>
+                            </div>
+                            <div class="card-body">
+                                <div id="departmentGradesList">
+                                    <!-- سيتم تحميل الأقسام والفرق ديناميكياً -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- قسم سجلات الشات -->
+                    <div class="admin-section" id="chatLogs" style="display:none;">
+                        <h3>سجلات المحادثات</h3>
+
+                        <div class="users-list">
+                            <h4>المستخدمون</h4>
+                            <div id="usersList">
+                                <!-- سيتم تحميل المستخدمين ديناميكياً -->
+                            </div>
+                        </div>
+
+                        <div class="user-chat" id="userChatSection" style="display:none;">
+                            <h4>محادثات المستخدم</h4>
+                            <div id="userChatContent">
+                                <!-- سيتم عرض المحادثات هنا -->
+                            </div>
+                        </div>
+                    </div>
+
+            </div>
+        </div> <!-- end admin-panel -->
+        </body>
+</html>
